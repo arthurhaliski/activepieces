@@ -319,7 +319,7 @@ describe('Authentication API', () => {
             expect(response?.statusCode).toBe(StatusCodes.FORBIDDEN)
             const responseBody = response?.json()
 
-            expect(responseBody?.code).toBe('INVITATION_ONLY_SIGN_UP')
+            expect(responseBody?.code).toBe('SIGN_UP_DISABLED')
         })
  
     })
@@ -595,7 +595,7 @@ describe('Authentication API', () => {
 
             expect(response?.statusCode).toBe(StatusCodes.FORBIDDEN)
 
-            expect(responseBody?.code).toBe('INVITATION_ONLY_SIGN_UP')
+            expect(responseBody?.code).toBe('SIGN_UP_DISABLED')
         })
 
         it('Fails if password doesn\'t match', async () => {

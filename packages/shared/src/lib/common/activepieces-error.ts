@@ -38,7 +38,6 @@ export type ApErrorParams =
     | InvalidJwtTokenErrorParams
     | InvalidOtpParams
     | InvalidSAMLResponseParams
-    | InvitationOnlySignUpParams
     | JobRemovalFailureErrorParams
     | OpenAiFailedErrorParams
     | PauseMetadataMissingErrorParams
@@ -56,7 +55,6 @@ export type ApErrorParams =
     | TriggerEnableErrorParams
     | TriggerFailedErrorParams
     | ValidationErrorParams
-    | InvitationOnlySignUpParams
     | UserIsInActiveErrorParams
     | DomainIsNotAllowedErrorParams
     | EmailAuthIsDisabledParams
@@ -82,13 +80,6 @@ export type BaseErrorParams<T, V> = {
 export type MemoryIssueParams = BaseErrorParams<ErrorCode.MEMORY_ISSUE, {
     message?: string
 }>
-
-export type InvitationOnlySignUpParams = BaseErrorParams<
-ErrorCode.INVITATION_ONLY_SIGN_UP,
-{
-    message?: string
-}
->
 
 export type InvalidClaimParams = BaseErrorParams<ErrorCode.INVALID_CLAIM, { redirectUrl: string, tokenUrl: string, clientId: string }>
 export type InvalidCloudClaimParams = BaseErrorParams<ErrorCode.INVALID_CLOUD_CLAIM, { pieceName: string }>
@@ -464,7 +455,6 @@ export enum ErrorCode {
     INVALID_OR_EXPIRED_JWT_TOKEN = 'INVALID_OR_EXPIRED_JWT_TOKEN',
     INVALID_OTP = 'INVALID_OTP',
     INVALID_SAML_RESPONSE = 'INVALID_SAML_RESPONSE',
-    INVITATION_ONLY_SIGN_UP = 'INVITATION_ONLY_SIGN_UP',
     JOB_REMOVAL_FAILURE = 'JOB_REMOVAL_FAILURE',
     OPEN_AI_FAILED = 'OPEN_AI_FAILED',
     PAUSE_METADATA_MISSING = 'PAUSE_METADATA_MISSING',

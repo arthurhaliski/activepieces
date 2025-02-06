@@ -19,14 +19,7 @@ export const authenticationUtils = {
             platformId,
             email,
         })
-        if (!isInvited) {
-            throw new ActivepiecesError({
-                code: ErrorCode.INVITATION_ONLY_SIGN_UP,
-                params: {
-                    message: 'User is not invited to the platform',
-                },
-            })
-        }
+        return
     },
 
     async getProjectAndToken(params: GetProjectAndTokenParams): Promise<AuthenticationResponse> {
@@ -35,15 +28,18 @@ export const authenticationUtils = {
             platformId: params.platformId,
             userId: params.userId,
         })
-        const project = isNil(params.projectId) ? projects?.[0] : projects.find((project) => project.id === params.projectId)
+        let project = isNil(params.projectId) ? projects?.[0] : projects.find((project) => project.id === params.projectId)
+        
+        // Create a default project if none exists
         if (isNil(project)) {
-            throw new ActivepiecesError({
-                code: ErrorCode.INVITATION_ONLY_SIGN_UP,
-                params: {
-                    message: 'No project found for user',
-                },
+            const identity = await userIdentityService(system.globalLogger()).getOneOrFail({ id: user.identityId })
+            project = await projectService.create({
+                displayName: identity.firstName + '\'s Project',
+                ownerId: user.id,
+                platformId: params.platformId,
             })
         }
+
         const identity = await userIdentityService(system.globalLogger()).getOneOrFail({ id: user.identityId })
         if (!identity.verified) {
             throw new ActivepiecesError({

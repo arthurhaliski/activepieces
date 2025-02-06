@@ -69,41 +69,36 @@ export async function piecesBuilder(app: FastifyInstance, io: Server, packages: 
 
     const watchers: chokidar.FSWatcher[] = []
 
-    for (const packageName of packages) {
-        app.log.info(chalk.blue(`Starting watch for package: ${packageName}`))
+    // Watch the entire community pieces directory
+    const communityPiecesDir = resolve(__dirname, '../../../../../pieces/community')
+    app.log.info(chalk.blue(`Starting watch for all pieces in: ${communityPiecesDir}`))
 
-        const pieceDirectory = await filePiecesUtils(packages, app.log).findPieceDirectoryByFolderName(packageName)
-        if (isNil(pieceDirectory)) {
-            app.log.info(chalk.yellow(`Piece directory not found for package: ${packageName}`))
-            continue
-        }
-        app.log.info(chalk.yellow(`Found piece directory: ${pieceDirectory}`))
+    const watcher = chokidar.watch(communityPiecesDir, {
+        ignored: [/^\./, /node_modules/, /dist/],
+        persistent: true,
+        ignoreInitial: true,
+        awaitWriteFinish: {
+            stabilityThreshold: 2000,
+            pollInterval: 200,
+        },
+    })
 
-        const pieceProjectName = `pieces-${packageName}`
-        const packageJsonName = await filePiecesUtils(packages, app.log).getPackageNameFromFolderPath(pieceDirectory)
-        const debouncedHandleFileChange = debounce(() => {
-            handleFileChange(packages, pieceProjectName, packageJsonName, io, app.log).catch(app.log.error)
-        }, 2000)
+    watcher.on('ready', () => {
+        app.log.info(chalk.green('Initial scan complete. Ready for changes'))
+    })
 
-        const watcher = chokidar.watch(resolve(pieceDirectory), {
-            ignored: [/^\./, /node_modules/, /dist/],
-            persistent: true,
-            ignoreInitial: true,
-            awaitWriteFinish: {
-                stabilityThreshold: 2000,
-                pollInterval: 200,
-            },
-        })
-        watcher.on('ready', debouncedHandleFileChange)
-        watcher.on('all', (event, path) => {
-            if (path.endsWith('.ts') || path.endsWith('package.json')) {
-                debouncedHandleFileChange()
+    watcher.on('all', (event, path) => {
+        if (path.endsWith('.ts') || path.endsWith('package.json')) {
+            const pieceDir = path.split('/pieces/community/')[1]?.split('/')[0]
+            if (pieceDir) {
+                const pieceProjectName = `pieces-${pieceDir}`
+                const packageJsonName = `@activepieces/piece-${pieceDir}`
+                handleFileChange(packages, pieceProjectName, packageJsonName, io, app.log).catch(app.log.error)
             }
-        })
+        }
+    })
 
-        watchers.push(watcher)
-    }
-
+    watchers.push(watcher)
 
     app.addHook('onClose', () => {
         for (const watcher of watchers) {

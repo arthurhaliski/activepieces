@@ -1,4 +1,3 @@
-
 import { PieceMetadata, PieceMetadataModel, PieceMetadataModelSummary } from '@activepieces/pieces-framework'
 import { AppSystemProp, filePiecesUtils } from '@activepieces/server-shared'
 
@@ -23,7 +22,7 @@ import { PieceMetadataService } from './piece-metadata-service'
 import { toPieceMetadataModelSummary } from '.'
 
 const loadPiecesMetadata = async (): Promise<PieceMetadata[]> => {
-    const packages = system.getOrThrow(AppSystemProp.DEV_PIECES)?.split(',')
+    const packages = ['community'] // Include all community pieces
     const pieces = await filePiecesUtils(packages, system.globalLogger()).findAllPieces()
     return pieces.sort((a, b) =>
         a.displayName.toUpperCase().localeCompare(b.displayName.toUpperCase()),

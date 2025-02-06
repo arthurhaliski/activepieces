@@ -372,19 +372,11 @@ The application started on ${domainHelper.getPublicApiUrl({ path: '' })}, as spe
 
     const environment = system.get(AppSystemProp.ENVIRONMENT)
     const piecesSource = system.getOrThrow(AppSystemProp.PIECES_SOURCE)
-    const pieces = process.env.AP_DEV_PIECES
 
     app.log.warn(
         `[WARNING]: Pieces will be loaded from source type ${piecesSource}`,
     )
-    if (environment === ApEnvironment.DEVELOPMENT) {
-        app.log.warn(
-            `[WARNING]: The application is running in ${environment} mode.`,
-        )
-        app.log.warn(
-            `[WARNING]: This is only shows pieces specified in AP_DEV_PIECES ${pieces} environment variable.`,
-        )
-    }
+
     const oldestPlatform = await platformService.getOldestPlatform()
     const key = system.get<string>(AppSystemProp.LICENSE_KEY)
     if (!isNil(oldestPlatform) && !isNil(key)) {

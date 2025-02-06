@@ -90,3 +90,16 @@ async function setupBaseApp(): Promise<FastifyInstance> {
     return app
 }
 
+if (require.main === module) {
+    setupServer().then(app => {
+        const PORT = 3001; // Porta alterada para 3001
+        app.listen(PORT, '0.0.0.0', (err, address) => {
+            if (err) {
+                app.log.error(err);
+                process.exit(1);
+            }
+            app.log.info(`Servidor ouvindo em ${address}`);
+        });
+    });
+}
+

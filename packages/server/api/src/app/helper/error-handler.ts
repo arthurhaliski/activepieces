@@ -35,7 +35,6 @@ export const errorHandler = async (
             [ErrorCode.INVALID_GIT_CREDENTIALS]: StatusCodes.BAD_REQUEST,
             [ErrorCode.INVALID_OTP]: StatusCodes.GONE,
             [ErrorCode.VALIDATION]: StatusCodes.CONFLICT,
-            [ErrorCode.INVITATION_ONLY_SIGN_UP]: StatusCodes.FORBIDDEN,
             [ErrorCode.AUTHENTICATION]: StatusCodes.UNAUTHORIZED,
             [ErrorCode.INVALID_LICENSE_KEY]: StatusCodes.BAD_REQUEST,
             [ErrorCode.EMAIL_ALREADY_HAS_ACTIVATION_KEY]: StatusCodes.CONFLICT,
